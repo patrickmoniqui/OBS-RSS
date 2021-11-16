@@ -1,7 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { RssComponent } from './rss/rss.component';
 
-const routes: Routes = [];
+const routes: Routes = [
+  {path:'rss', component:RssComponent}
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
