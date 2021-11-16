@@ -12,59 +12,65 @@ import { NewsRss } from '../model/RssData';
 export class RssComponent implements OnInit {
   RssData: NewsRss = {} as NewsRss;
   RssDataInlineText: string = "";
-  SpeedTime = 50;
-  Speed = "marquee " + this.SpeedTime + "s linear infinite";
-  RssCount = 5;
-  RssUrl: string = ""
+  SpeedTime = 60;
+  Speed = this.SpeedTime + "s"
+  RssFeedUrl: string = ""
+  RssFeedTake: number = -1
+  RssFeedResultUrl: string = ""
 
   constructor(private http: HttpClient, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params: any) => {
       var symbol = params.params.q ?? 'AAPL';
-      this.GetRssFeedData(symbol);
+      this.refresh();
     });
   }
 
-  GetRssFeedData(symbol: any) {
+  refresh() {
+    this.GetHtml()
+  }
+
+  GenerateRssFeedResultUrl(): string {
+    this.RssFeedResultUrl = "/rss/inline-text" + "?" + "url=" + encodeURIComponent(this.RssFeedUrl);
+    return this.RssFeedResultUrl;
+  }
+
+  GetHtml() {
     const requestOptions: Object = {
-      observe: 'body',
-      responseType: 'text'
     };
-    const _url = "https://www.espn.com/espn/rss/news";
+
     this.http
-      .get<any>(
-        _url,
-        requestOptions
-      )
-      .subscribe((data) => {
-        const parser = require('fast-xml-parser');
+        .get<any>(
+          this.GenerateRssFeedResultUrl(),
+          requestOptions
+        )
+        .subscribe((data) => {
+          this.RssDataInlineText = data;
+        });
+  }
 
-        const options = {};
+  rssUrlChange(e: string) {
 
-        try{
-          this.RssData = parser.parse(data, options, true);
+    // TODO: if valid url
+    if(true) {
+      this.RssFeedUrl = e;
+    }
 
-          if(this.RssCount == -1){
-            this.RssCount = this.RssData.rss.channel.item.length
-          }
+    console.log("RSS Feed changed for: " + this.RssFeedUrl)
+    this.refresh();
+  }
 
-          for(let i =0;i < this.RssCount; i++) {
-            let rss = this.RssData.rss.channel.item[i]
+  rssTakeChange(e: string) {
+    let count = parseInt(e)
+    this.RssFeedTake = count;
+    this.refresh();
+  }
 
-            if(i == this.RssData.rss.channel.item.length -1) {
-              this.RssDataInlineText += rss.title + ": " + rss.description + " | "
-              break;
-            }
-
-            this.RssDataInlineText += rss.title + ": " + rss.description;
-          }
-
-        }
-        catch(error){
-          console.log(error)
-        }
-      });
+  rssTextScrollSpeedChange(e: string){
+    let speed = parseFloat(e);
+    this.SpeedTime = speed;
+    this.Speed = this.SpeedTime + "s"
   }
 
 }
