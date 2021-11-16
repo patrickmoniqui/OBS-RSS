@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NewsRss } from 'src/app/model/RssData';
@@ -9,45 +9,66 @@ import { NewsRss } from 'src/app/model/RssData';
   styleUrls: ['./inline-text.component.scss']
 })
 export class InlineTextComponent implements OnInit {
+  @Input('url')
   RssFeedUrl: string = ""
+
   RssData: NewsRss = {} as NewsRss;
   RssFeedTake: number = -1;
-  SpeedTime: number = 60;
-  Speed: string = this.SpeedTime + "s";
+
+  @Input('speed')
+  Speed: number = 60;
+
   FontSize = '32px';
   Color: string = 'black'
   RssDataInlineText: string = "";
 
   constructor(private http: HttpClient, private route: ActivatedRoute) { }
 
+  ngOnChanges() {
+    console.log("ngOnChanges inline-text component")
+    console.log(this.RssFeedUrl)
+    this.refresh()
+    }  
+
+  refresh() {
+    this.GetRssFeedData(null);
+  }
+
   ngOnInit(): void {
+    this.refresh()
+    console.log("ngOnInit inline-text component")
+
     this.route.queryParamMap
-      .subscribe((params) => {
-        params.keys.forEach(element => {
-          console.log("Param: " + element + "=" + params.get(element)!);
+    .subscribe((params) => {
+      params.keys.forEach(element => {
+        console.log("Param: " + element + "=" + params.get(element)!);
 
-          if(element === 'url') {
-            this.RssFeedUrl = params.get(element)!;
-            console.log("url: " + this.RssFeedUrl)
-            this.GetRssFeedData(null);
-          }
-          if(element === 'fontSize') {
-            this.FontSize = parseInt(params.get(element)!) + 'px';
-            console.log("fontSize: " + this.FontSize)
-          }
-          if(element === 'color') {
-            this.Color = params.get(element)!
-          }
-          if(element === 'scrollSpeed') {
-            this.SpeedTime = parseFloat(params.get(element)!)
-            this.Speed = this.SpeedTime + "s";
-          }
+        if(element === 'url') {
+          this.RssFeedUrl = params.get(element)!;
+          console.log("url: " + this.RssFeedUrl)
+          this.GetRssFeedData(null);
+        }
+        if(element === 'fontSize') {
+          this.FontSize = parseInt(params.get(element)!) + 'px';
+          console.log("fontSize: " + this.FontSize)
+        }
+        if(element === 'color') {
+          this.Color = params.get(element)!
+        }
+        if(element === 'scrollSpeed') {
+          this.Speed= parseFloat(params.get(element)!)
+        }
 
-        });
       });
+    });
+
+    
     }
 
-    GetRssFeedData(symbol: any) {
+  GetRssFeedData(symbol: any) {
+
+      console.log("fetching: " + this.RssFeedUrl)
+
       const requestOptions: Object = {
         observe: 'body',
         responseType: 'text'

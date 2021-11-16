@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import * as xml2js from 'xml2js'
@@ -12,11 +12,17 @@ import { NewsRss } from '../model/RssData';
 export class RssComponent implements OnInit {
   RssData: NewsRss = {} as NewsRss;
   RssDataInlineText: string = "";
+
   SpeedTime = 60;
   Speed = this.SpeedTime + "s"
+
   RssFeedUrl: string = ""
+
   RssFeedTake: number = -1
   RssFeedResultUrl: string = ""
+  
+  @Input()
+  Color = 'black'
 
   constructor(private http: HttpClient, private route: ActivatedRoute) { }
 
@@ -28,12 +34,39 @@ export class RssComponent implements OnInit {
   }
 
   refresh() {
-    this.GetHtml()
+    //this.GetHtml()
   }
 
   GenerateRssFeedResultUrl(): string {
-    this.RssFeedResultUrl = "/rss/inline-text" + "?" + "url=" + encodeURIComponent(this.RssFeedUrl);
+    this.RssFeedResultUrl = window.location.origin + "/rss/inline-text?";
+
+    var queryParams = new Map();
+
+    if(this.RssFeedUrl) {
+      queryParams.set('url', encodeURIComponent(this.RssFeedUrl));
+    }
+
+    if(this.SpeedTime) {
+      queryParams.set('scrollSpeed', this.SpeedTime);
+    }
+
+    if(this.RssFeedTake){
+      queryParams.set('nbNews', this.RssFeedTake)
+    }
+
+    if(this.Color){
+      queryParams.set('color', this.Color)
+    }
+
+    queryParams.forEach( (value, key) => {
+      this.RssFeedResultUrl += key + "=" + value + "&"
+    })
+
+    this.RssFeedResultUrl = this.RssFeedResultUrl.substring(0, this.RssFeedResultUrl.length-1)
+
+    console.log(this.RssFeedResultUrl)
     return this.RssFeedResultUrl;
+    
   }
 
   GetHtml() {
@@ -71,6 +104,12 @@ export class RssComponent implements OnInit {
     let speed = parseFloat(e);
     this.SpeedTime = speed;
     this.Speed = this.SpeedTime + "s"
+    console.log("Change Scroll Speed")
+    this.refresh();
   }
 
+  rssColorChange(e: string){
+    this.Color = e;
+    this.refresh();
+  }
 }

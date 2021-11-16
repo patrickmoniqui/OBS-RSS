@@ -2,10 +2,16 @@
 
 <p>Number of news: <input type="number" [(ngModel)]="RssFeedTake" (ngModelChange)="rssTakeChange($event)" /></p>
 
-<p>Scroll speed: <input type="number" min="0" value="0" step="0.1" [(ngModel)]="SpeedTime" (ngModelChange)="rssTextScrollSpeedChange($event)" /></p>
+<p>Scroll speed: <input type="number" min="0" value="0" step="0.1" value={{SpeedTime}} [(ngModel)]="SpeedTime" (ngModelChange)="rssTextScrollSpeedChange($event)" /></p>
 
-<button (click)="GenerateRssFeedResultUrl">Get Url</button>
+<p>Number of news: <input type="text" [(ngModel)]="Color" (ngModelChange)="rssColorChange($event)" /></p>
 
-<a href={{ RssFeedResultUrl }}>{{ RssFeedResultUrl }}</a>
+<button (change)="refresh">Refresh</button>
+
+<button (change)="GenerateRssFeedResultUrl">Get Url</button>
+
+<p>{{ RssFeedResultUrl }}</p>
+
+<app-inline-text [url]="RssFeedUrl" [speed]="SpeedTime"></app-inline-text>
 
 <div id='result' [innerHTML]="RssDataInlineText"></div>
