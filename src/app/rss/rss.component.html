@@ -1,17 +1,20 @@
 <p>RSS Url: <input type="text" [(ngModel)]="RssFeedUrl" (ngModelChange)="rssUrlChange($event)" /></p>
 
-<p>Number of news: <input type="number" [(ngModel)]="RssFeedTake" (ngModelChange)="rssTakeChange($event)" /></p>
+<p>Number of news: <input type="number" type="number" min="0" value="0" step="1"[(ngModel)]="RssFeedTake" (ngModelChange)="rssTakeChange($event)" /></p>
 
 <p>Scroll speed: <input type="number" min="0" value="0" step="0.1" value={{SpeedTime}} [(ngModel)]="SpeedTime" (ngModelChange)="rssTextScrollSpeedChange($event)" /></p>
 
-<p>Number of news: <input type="text" [(ngModel)]="Color" (ngModelChange)="rssColorChange($event)" /></p>
+<p>Text color: 
+    <input [(colorPicker)]="Color" [style.background]="Color"/>
+    <input type="text" [(ngModel)]="Color" (ngModelChange)="rssColorChange($event)" />
+</p>
+
+<p>Refresh interval: <input type="number" [(ngModel)]="RefreshInterval" (ngModelChange)="refreshIntervalChange($event)" /></p>
 
 <button (change)="refresh">Refresh</button>
 
-<button (change)="GenerateRssFeedResultUrl">Get Url</button>
+<p><button (click)="copyUrl()">Copy Url</button> {{ RssFeedResultUrl }}</p>
 
-<p>{{ RssFeedResultUrl }}</p>
+<h3>Result: </h3>
 
-<app-inline-text [url]="RssFeedUrl" [speed]="SpeedTime"></app-inline-text>
-
-<div id='result' [innerHTML]="RssDataInlineText"></div>
+<app-inline-text [url]="RssFeedUrl" [speed]="SpeedTime" [color]="Color"></app-inline-text>

@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import * as xml2js from 'xml2js'
 import { NewsRss } from '../model/RssData';
 
 @Component({
@@ -18,11 +17,13 @@ export class RssComponent implements OnInit {
 
   RssFeedUrl: string = ""
 
-  RssFeedTake: number = -1
+  RssFeedTake: number = 0
   RssFeedResultUrl: string = ""
   
   @Input()
-  Color = 'black'
+  Color = '#000000'
+
+  RefreshInterval: number = 5000;
 
   constructor(private http: HttpClient, private route: ActivatedRoute) { }
 
@@ -34,7 +35,19 @@ export class RssComponent implements OnInit {
   }
 
   refresh() {
-    //this.GetHtml()
+    this.GenerateRssFeedResultUrl()
+  }
+
+  copyUrl() {
+    var text = this.GenerateRssFeedResultUrl()
+
+    console.log("url to copy:" + text)
+
+    navigator.clipboard.writeText(text).then(function() {
+      console.log('Async: Copying to clipboard was successful!');
+    }, function(err) {
+      console.error('Async: Could not copy text: ', err);
+    });
   }
 
   GenerateRssFeedResultUrl(): string {
@@ -63,24 +76,8 @@ export class RssComponent implements OnInit {
     })
 
     this.RssFeedResultUrl = this.RssFeedResultUrl.substring(0, this.RssFeedResultUrl.length-1)
-
-    console.log(this.RssFeedResultUrl)
     return this.RssFeedResultUrl;
     
-  }
-
-  GetHtml() {
-    const requestOptions: Object = {
-    };
-
-    this.http
-        .get<any>(
-          this.GenerateRssFeedResultUrl(),
-          requestOptions
-        )
-        .subscribe((data) => {
-          this.RssDataInlineText = data;
-        });
   }
 
   rssUrlChange(e: string) {
@@ -110,6 +107,11 @@ export class RssComponent implements OnInit {
 
   rssColorChange(e: string){
     this.Color = e;
+    this.refresh();
+  }
+
+  refreshIntervalChange(e: string){
+    this.RefreshInterval = parseInt(e);
     this.refresh();
   }
 }
