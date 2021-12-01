@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { NewsRss } from 'src/app/model/RssData';
 import { timer } from 'rxjs';
 import { Observable } from 'rxjs';
+import { Console } from 'console';
 
 @Component({
   selector: 'app-inline-text',
@@ -15,12 +16,15 @@ export class InlineTextComponent implements OnInit {
   RssFeedUrl: string = ""
 
   RssData: NewsRss = {} as NewsRss;
+
+  @Input('nbNews')
   RssFeedTake: number = 0;
 
   @Input('speed')
   Speed: number = 60;
 
-  FontSize = '32px';
+  @Input('fontSize')
+  FontSize = "32"
 
   @Input('color')
   Color: string = 'black'
@@ -29,8 +33,14 @@ export class InlineTextComponent implements OnInit {
 
   Timer: Observable<number> | undefined;
 
-  @Input('refresh')
-  RefreshInterval: number = 5000;
+  @Input('refreshInterval')
+  RefreshInterval: number = 900;
+
+  @Input('separator')
+  NewsTextSeperator: string = " | "
+
+  @Input('titleDescriptionSeparator')
+  TitleDescriptionSeparator: string = " : "
 
   constructor(private http: HttpClient, private route: ActivatedRoute) { }
 
@@ -56,7 +66,7 @@ export class InlineTextComponent implements OnInit {
           }
 
           if (element === 'fontSize') {
-            this.FontSize = parseInt(params.get(element)!) + 'px';
+            this.FontSize = params.get(element)!;
             console.log("fontSize: " + this.FontSize)
           }
 
@@ -68,13 +78,19 @@ export class InlineTextComponent implements OnInit {
             this.Speed = parseFloat(params.get(element)!)
           }
 
-          if (element === 'refresh'){
-            this.RefreshInterval
+          if(element === 'separator') {
+            this.NewsTextSeperator = params.get(element)!
           }
+
+          if (element === 'refreshInterval'){
+            this.RefreshInterval = parseInt(params.get(element)!)
+          }
+
+          console.log(params)
 
         });
       });
-      this.observableTimer(this.RefreshInterval)
+      this.observableTimer(this.RefreshInterval * 1000)
   }
 
   GetRssFeedData(symbol: any) {
@@ -110,10 +126,10 @@ export class InlineTextComponent implements OnInit {
               let rss = this.RssData.rss.channel.item[i]
 
               if (i == this.RssFeedTake - 1) {
-                this.RssDataInlineText += rss.title + ": " + rss.description + " | "
+                this.RssDataInlineText += rss.title + this.TitleDescriptionSeparator + rss.description;
                 break;
               }
-              this.RssDataInlineText += rss.title + ": " + rss.description;
+              this.RssDataInlineText += rss.title + this.TitleDescriptionSeparator + rss.description + this.NewsTextSeperator;
             }
 
             console.log("TEXT: " + this.RssDataInlineText)

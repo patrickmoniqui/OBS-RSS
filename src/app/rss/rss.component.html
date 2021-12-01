@@ -1,22 +1,26 @@
 <p>RSS Url: <input type="text" [(ngModel)]="RssFeedUrl" (ngModelChange)="rssUrlChange($event)" /></p>
 
-<p>Number of news: <input type="number" type="number" min="0" value="0" step="1"[(ngModel)]="RssFeedTake" (ngModelChange)="rssTakeChange($event)" /></p>
+<p>Number of news: <input type="number" type="number" min="0" value="0" step="1"[(ngModel)]="RssFeedTake" (ngModelChange)="rssTakeChange($event)" /> (0 = all) </p>
 
 <p>Scroll speed: <input type="number" min="0" value="0" step="0.1" value={{SpeedTime}} [(ngModel)]="SpeedTime" (ngModelChange)="rssTextScrollSpeedChange($event)" /></p>
 
 <p>Text color: 
-    <input [(colorPicker)]="Color" [style.background]="Color"/>
+    <input [(colorPicker)]="Color" [style.background]="Color" [(ngModel)]="Color" (ngModelChange)="rssColorChange($event)"/>
     <input type="text" [(ngModel)]="Color" (ngModelChange)="rssColorChange($event)" />
 </p>
 
-<p>Text size: <input type="number" [(ngModel)]="TextSize" (ngModelChange)="textSizeChange($event)" /></p>
+<p>Text size: <input type="number" [(ngModel)]="FontSize" (ngModelChange)="fontSizeChange($event)" /></p>
 
-<p>Refresh interval: <input type="number" [(ngModel)]="RefreshInterval" (ngModelChange)="refreshIntervalChange($event)" /></p>
+<p>Refresh interval (second): <input type="number" [(ngModel)]="RefreshInterval" (ngModelChange)="refreshIntervalChange($event)" /></p>
 
-<button (change)="refresh">Refresh</button>
+<p>Separator between Title and Description <input type="text" [(ngModel)]="TitleDescriptionSeparator" (ngModelChange)="refresh()" ></p>
 
-<p><button (click)="copyUrl()">Copy Url</button> {{ RssFeedResultUrl }}</p>
+<p>Separator between news: <input type="text" [(ngModel)]="NewsTextSeperator" (ngModelChange)="refresh()"></p>
+
+<button (click)="refresh()">Refresh</button>
+
+<p><button (click)="copyUrl()">Copy Url</button> {{ RssFeedResultUrl }}  <a href="{{ RssFeedResultUrl }}" target="blank">Open in new tab</a> </p>
 
 <h3>Result: </h3>
 
-<app-inline-text [url]="RssFeedUrl" [speed]="SpeedTime" [color]="Color" [refresh]="RefreshInterval"></app-inline-text>
+<app-inline-text [url]="RssFeedUrl" [nbNews]="RssFeedTake" [speed]="SpeedTime" [color]="Color" [refreshInterval]="RefreshInterval" [separator]="NewsTextSeperator" [titleDescriptionSeparator]="TitleDescriptionSeparator" [fontSize]="FontSize" ></app-inline-text>

@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NewsRss } from '../model/RssData';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-rss',
@@ -22,17 +23,27 @@ export class RssComponent implements OnInit {
   
   Color = '#000000'
 
-  TextSize: number | undefined;
+  FontSize: string = "32"
 
-  RefreshInterval: number = 5000;
+  RefreshInterval: number = 900;
 
-  constructor(private http: HttpClient, private route: ActivatedRoute) { }
+  NewsTextSeperator: string = " | "
+
+  TitleDescriptionSeparator: string = " : "
+
+  location: Location;
+
+  constructor(private http: HttpClient, private route: ActivatedRoute, location: Location) {
+    this.location = location;
+   }
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params: any) => {
       var symbol = params.params.q ?? 'AAPL';
       this.refresh();
     });
+
+    console.log(this.location)
   }
 
   refresh() {
@@ -41,8 +52,6 @@ export class RssComponent implements OnInit {
 
   copyUrl() {
     var text = this.GenerateRssFeedResultUrl()
-
-    console.log("url to copy:" + text)
 
     navigator.clipboard.writeText(text).then(function() {
       console.log('Async: Copying to clipboard was successful!');
@@ -69,7 +78,23 @@ export class RssComponent implements OnInit {
     }
 
     if(this.Color){
-      queryParams.set('color', this.Color)
+      queryParams.set('color', encodeURIComponent(this.Color))
+    }
+
+    if(this.NewsTextSeperator) {
+      queryParams.set('separator', encodeURIComponent(this.NewsTextSeperator))
+    }
+
+    if(this.FontSize) {
+      queryParams.set('fontSize', this.FontSize)
+    }
+
+    if(this.RefreshInterval) {
+      queryParams.set('refreshInterval', this.RefreshInterval)
+    }
+
+    if(this.TitleDescriptionSeparator) {
+      queryParams.set('titleDescriptionSeparator', this.TitleDescriptionSeparator)
     }
 
     queryParams.forEach( (value, key) => {
@@ -78,7 +103,6 @@ export class RssComponent implements OnInit {
 
     this.RssFeedResultUrl = this.RssFeedResultUrl.substring(0, this.RssFeedResultUrl.length-1)
     return this.RssFeedResultUrl;
-    
   }
 
   rssUrlChange(e: string) {
@@ -98,8 +122,8 @@ export class RssComponent implements OnInit {
     this.refresh();
   }
 
-  textSizeChange(e: string){
-    this.TextSize = parseInt(e);
+  fontSizeChange(e: string){
+    this.FontSize = e;
     this.refresh();
   }
 
