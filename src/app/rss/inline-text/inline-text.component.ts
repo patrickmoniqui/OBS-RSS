@@ -28,6 +28,8 @@ export class InlineTextComponent implements OnInit {
   RssDataInlineText: string = "";
 
   Timer: Observable<number> | undefined;
+
+  @Input('refresh')
   RefreshInterval: number = 5000;
 
   constructor(private http: HttpClient, private route: ActivatedRoute) { }
@@ -52,7 +54,7 @@ export class InlineTextComponent implements OnInit {
             console.log("url: " + this.RssFeedUrl)
             this.GetRssFeedData(null);
           }
-          
+
           if (element === 'fontSize') {
             this.FontSize = parseInt(params.get(element)!) + 'px';
             console.log("fontSize: " + this.FontSize)
@@ -65,6 +67,11 @@ export class InlineTextComponent implements OnInit {
           if (element === 'scrollSpeed') {
             this.Speed = parseFloat(params.get(element)!)
           }
+
+          if (element === 'refresh'){
+            this.RefreshInterval
+          }
+
         });
       });
       this.observableTimer(this.RefreshInterval)

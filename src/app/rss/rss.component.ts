@@ -20,8 +20,9 @@ export class RssComponent implements OnInit {
   RssFeedTake: number = 0
   RssFeedResultUrl: string = ""
   
-  @Input()
   Color = '#000000'
+
+  TextSize: number | undefined;
 
   RefreshInterval: number = 5000;
 
@@ -94,6 +95,11 @@ export class RssComponent implements OnInit {
   rssTakeChange(e: string) {
     let count = parseInt(e)
     this.RssFeedTake = count;
+    this.refresh();
+  }
+
+  textSizeChange(e: string){
+    this.TextSize = parseInt(e);
     this.refresh();
   }
 

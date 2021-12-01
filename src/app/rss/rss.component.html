@@ -9,6 +9,8 @@
     <input type="text" [(ngModel)]="Color" (ngModelChange)="rssColorChange($event)" />
 </p>
 
+<p>Text size: <input type="number" [(ngModel)]="TextSize" (ngModelChange)="textSizeChange($event)" /></p>
+
 <p>Refresh interval: <input type="number" [(ngModel)]="RefreshInterval" (ngModelChange)="refreshIntervalChange($event)" /></p>
 
 <button (change)="refresh">Refresh</button>
@@ -17,4 +19,4 @@
 
 <h3>Result: </h3>
 
-<app-inline-text [url]="RssFeedUrl" [speed]="SpeedTime" [color]="Color"></app-inline-text>
+<app-inline-text [url]="RssFeedUrl" [speed]="SpeedTime" [color]="Color" [refresh]="RefreshInterval"></app-inline-text>
